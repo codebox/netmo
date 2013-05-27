@@ -8,6 +8,8 @@ import time
 from Queue import Queue
 from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 from SocketServer import ThreadingMixIn
+import os
+from file_manager import FileManager
 
 HOST_NAME = '0.0.0.0'
 PORT_NUMBER = 8182
@@ -27,6 +29,7 @@ class Buffer:
         self.clients.remove(client)
 
 buffer = Buffer()
+file_manager = FileManager('web')
 
 def packet_to_dict(packet):
     #http://www.binarytides.com/python-packet-sniffer-code-linux/
@@ -60,15 +63,6 @@ def packet_to_dict(packet):
     d['dport'] =  str(tcph[1])
 
     return d     
-
-HTML_FILE = 'netmo.html'
-HTML = open(HTML_FILE).read()
-
-JS_FILE = 'netmo.js'
-JS   = open(JS_FILE).read()
-
-CSS_FILE = 'netmo.css'
-CSS  = open(CSS_FILE).read()
 
 lock = Lock()
 
@@ -114,33 +108,22 @@ def respond(handler):
 
 class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_GET(s):
-        if s.path == '/' + HTML_FILE:
-            s.send_response(200)
-            s.send_header("Content-type", "text/html")
-            s.end_headers()
-            s.wfile.write(HTML)
-
-        elif s.path == '/' + JS_FILE:
-            s.send_response(200)
-            s.send_header("Content-type", "text/javascript")
-            s.end_headers()
-            s.wfile.write(JS)
-
-        elif s.path == '/' + CSS_FILE:
-            s.send_response(200)
-            s.send_header("Content-type", "text/css")
-            s.end_headers()
-            s.wfile.write(CSS)
-
-        elif s.path == '/data':
+        if s.path == '/data':
             s.send_response(200)
             s.send_header("Content-type", "text/event-stream")
             s.end_headers()
 
             respond(s)
-
         else:
-            s.send_response(404)
+            try:
+                content, content_type = file_manager.read(s.path)
+                s.send_response(200)
+                s.send_header("Content-type", content_type)
+                s.end_headers()
+                s.wfile.write(content)
+            except:
+                s.send_response(404)
+
 
 class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
     """ ok """
