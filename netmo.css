@@ -1,0 +1,11 @@
+body{
+	font-family: sans-serif;
+}
+li.box{
+	display: inline-block;
+	border: 1px solid;
+	list-style: none;
+	padding: 1em;
+	margin: 1em;
+	text-align: center;
+}
