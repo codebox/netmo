@@ -20,7 +20,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                 try:
                     self.wfile.write('retry: 1000\ndata: ' + sdata + '\n\n')
                 except:
-                    self.server.client_manager.unsubscribe(handler)
+                    self.server.client_manager.unsubscribe(self)
                     return
 
         else:

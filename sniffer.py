@@ -2,6 +2,7 @@ import socket
 from threading import Thread
 from struct import *
 
+
 def packet_to_dict(packet):
     #http://www.binarytides.com/python-packet-sniffer-code-linux/
     ip_header = packet[0:20]
@@ -36,8 +37,9 @@ def packet_to_dict(packet):
     return d     
 
 class Sniffer:
-    def __init__(self, callback_on_packet):
+    def __init__(self, callback_on_packet, reverse_dns):
         self.callback = callback_on_packet
+        self.reverse_dns = reverse_dns
 
     def filter(self, d):
         if d.get('src') in ['192.168.1.9', '127.0.0.1']:
@@ -52,7 +54,7 @@ class Sniffer:
                 packet = s.recvfrom(1024)
                 d = packet_to_dict(packet[0])
                 if self.filter(d):
-                    print d
+                    d['host'] = self.reverse_dns.lookup(d['src'])
                     self.callback(d)
 
         t = Thread(target=receive)

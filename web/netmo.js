@@ -1,29 +1,33 @@
 window.onload = function(){
     var l = document.getElementById('list');
     var h = document.getElementById('host');
-    var data = {};
+    var portData = {}, hostData = {};
 
     function addPort(port, count){
-        if (! data[port]){
+        if (! portData[port]){
 	        var li = document.createElement('li');
 	        li.className = 'box';
 	        l.appendChild(li);
-        	data[port] = {'count' : 0, 'el' : li};
+        	portData[port] = {'count' : 0, 'el' : li};
         }
-        data[port].count += count;
-        data[port].el.innerHTML = 'Port ' + port + '<br>' + data[port].count;
+        portData[port].count += count;
+        portData[port].el.innerHTML = 'Port ' + port + '<br>' + portData[port].count;
     }
-    function addHost(host){
-        var li = document.createElement('li');
-        h.appendChild(li);
-        li.innerHTML = host;
+    function addHost(ip,host){
+        if (! hostData[ip]){
+            var li = document.createElement('li');
+            h.appendChild(li);
+            hostData[ip] = {'count' : 0, 'el' : li};
+        }
+        hostData[ip].count += 1;
+        hostData[ip].el.innerHTML = host + ': ' + hostData[ip].count;
     }
 
     var evtSource = new EventSource("data");
     evtSource.onmessage = function(e) {
           var obj = eval('(' + e.data + ')');
           addPort(Number(obj.dport), 1);
-          addHost(obj.src);
+          addHost(obj.src, obj.host);
     };
 
 }
