@@ -33,6 +33,7 @@ def packet_to_dict(packet):
 
     d['sport'] =  str(tcph[0])
     d['dport'] =  str(tcph[1])
+    d['count'] = 1
 
     return d     
 

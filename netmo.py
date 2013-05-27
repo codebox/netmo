@@ -19,7 +19,8 @@ class ClientManager:
 
 file_manager = FileManager('web')
 client_manager = ClientManager()
-reverse_dns = ReverseDns()
+
+reverse_dns = ReverseDns(client_manager.on_packet)
 
 if __name__ == '__main__':
     sniffer = Sniffer(client_manager.on_packet, reverse_dns)
