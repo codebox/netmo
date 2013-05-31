@@ -38,8 +38,8 @@ def packet_to_dict(packet):
     return d     
 
 class Sniffer:
-    def __init__(self, callback_on_packet, reverse_dns):
-        self.callback = callback_on_packet
+    def __init__(self, queue, reverse_dns):
+        self.queue = queue
         self.reverse_dns = reverse_dns
 
     def filter(self, d):
@@ -56,7 +56,7 @@ class Sniffer:
                 d = packet_to_dict(packet[0])
                 if self.filter(d):
                     d['host'] = self.reverse_dns.lookup(d['src'])
-                    self.callback(d)
+                    self.queue.put(d)
 
         t = Thread(target=receive)
         t.daemon = True

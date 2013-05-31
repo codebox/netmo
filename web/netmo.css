@@ -1,11 +1,36 @@
+body, html{
+	margin: 0;
+	padding: 0;
+}
 body{
 	font-family: sans-serif;
 }
-li.box{
-	display: inline-block;
-	border: 1px solid;
-	list-style: none;
+#main{
+	width: 80%;
+	height: 100%;
+	margin: 0 auto;
+}
+#hosts, #lines, #ports{
+	width: 33%;
+	float: left;
+	height: 100%;
+}
+#lines{
+	border-width: 0 1px;
+	border-color: black;
+	border-style: solid;
+}
+#hosts div{
 	padding: 1em;
-	margin: 1em;
-	text-align: center;
+	text-align: right;
+	border: 1px solid;
+	transition: background-color 0.5s;
+}
+#hosts div.hilite{
+	background-color: #ff6;
+}
+#ports div{
+	padding: 1em;
+	text-align: left;
+	border: 1px solid;
 }

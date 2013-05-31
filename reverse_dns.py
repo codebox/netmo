@@ -4,18 +4,19 @@ import time
 from struct import *
 
 class ReverseDns:
-    def __init__(self, callback):
+    def __init__(self, queue):
         self.cache = {}
-        self.callback = callback
+        self.queue = queue
 
     def query(self, ip):
         def do_query():
             result = ip
             try:
                 result = socket.gethostbyaddr(ip)[0]
-                self.callback({'src' : ip, 'host' : result, 'count' : 0})
+                self.queue.put({'host' : ip, 'name' : result})
+                print 'resolved',ip,result
             except:
-                pass
+                print 'resolve failed',ip
             self.cache[ip] = result
 
         self.cache[ip] = ip

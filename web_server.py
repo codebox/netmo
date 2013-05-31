@@ -5,6 +5,8 @@ import time
 import json
 from Queue import Queue
 
+
+
 class RequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/data':
@@ -12,15 +14,25 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.send_header("Content-type", "text/event-stream")
             self.end_headers()
 
-            self.queue = Queue(0)
-            self.server.client_manager.subscribe(self)
             while True:
-                item = self.queue.get(True)
-                sdata = json.dumps(item)
+                item = self.server.packet_queue.get(True)
+                sdata = '{"host" : "%s", "port" : "%s"}' % (item['src'], item['dport'])
                 try:
                     self.wfile.write('retry: 1000\ndata: ' + sdata + '\n\n')
                 except:
-                    self.server.client_manager.unsubscribe(self)
+                    return
+
+        elif self.path == '/dns':
+            self.send_response(200)
+            self.send_header("Content-type", "text/event-stream")
+            self.end_headers()
+
+            while True:
+                item = self.server.dns_queue.get(True)
+                sdata = '{"host" : "%s", "name" : "%s"}' % (item['host'], item['name'])
+                try:
+                    self.wfile.write('retry: 1000\ndata: ' + sdata + '\n\n')
+                except:
                     return
 
         else:
@@ -34,17 +46,22 @@ class RequestHandler(BaseHTTPRequestHandler):
                 self.send_response(404)
 
 
-
 class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
-    def __init__(self, server_address, RequestHandlerClass, file_manager, client_manager):
+    def __init__(self, server_address, RequestHandlerClass, file_manager, packet_queue, dns_queue):
         HTTPServer.__init__(self, server_address, RequestHandlerClass)
         self.file_manager = file_manager
-        self.client_manager = client_manager
+        self.packet_queue = packet_queue
+        self.dns_queue    = dns_queue
 
 class WebServer:
-    def start(self, host, port, file_manager, client_manager):
+    def __init__(self, file_manager, packet_queue, dns_queue):
+        self.file_manager = file_manager
+        self.packet_queue = packet_queue
+        self.dns_queue    = dns_queue
+
+    def start(self, host, port):
         ThreadingMixIn.daemon_threads = True
-        httpd = ThreadedHTTPServer((host, port), RequestHandler, file_manager, client_manager)
+        httpd = ThreadedHTTPServer((host, port), RequestHandler, self.file_manager, self.packet_queue, self.dns_queue)
         print time.asctime(), "Server Starts - %s:%s" % (host, port)
         try:
             httpd.serve_forever()
