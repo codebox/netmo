@@ -6,28 +6,22 @@ from Queue import Queue
 
 class QueueManager:
     def __init__(self):
-        self.callbackFns = []
-        self.queue = Queue(0)
+        self.queues = []
 
-    def subscribe(self, callbackFn):
-        self.callbackFns.append(callbackFn)
+    def subscribe(self, queue):
+        self.queues.append(queue)
 
-    def unsubscribe(self, callbackFn):
-        self.callbackFns.remove(callbackFn)
-
-    def start(self):
-        while True:
-            item = self.queue.get(True)
-            for callbackFn in self.callbackFns:
-                callbackFn(data)
+    def unsubscribe(self, queue):
+        self.queues.remove(queue)
 
     def submit(self, item):
-        self.queue.put(item)
+        for queue in self.queues:
+            queue.put(item)
 
 
 if __name__ == '__main__':
-    packet_queue = Queue(0)
-    dns_queue    = Queue(0)
+    packet_queue = QueueManager()
+    dns_queue    = QueueManager()
 
     file_manager = FileManager('web')
     web_server   = WebServer(file_manager, packet_queue, dns_queue)

@@ -13,7 +13,7 @@ class ReverseDns:
             result = ip
             try:
                 result = socket.gethostbyaddr(ip)[0]
-                self.queue.put({'host' : ip, 'name' : result})
+                self.queue.submit({'host' : ip, 'name' : result})
                 print 'resolved',ip,result
             except:
                 print 'resolve failed',ip

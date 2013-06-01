@@ -13,26 +13,32 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-type", "text/event-stream")
             self.end_headers()
+            queue = Queue(0)
+            self.server.packet_queue.subscribe(queue)
 
             while True:
-                item = self.server.packet_queue.get(True)
+                item = queue.get(True)
                 sdata = '{"host" : "%s", "port" : "%s"}' % (item['src'], item['dport'])
                 try:
                     self.wfile.write('retry: 1000\ndata: ' + sdata + '\n\n')
                 except:
+                    self.server.packet_queue.unsubscribe(queue)
                     return
 
         elif self.path == '/dns':
             self.send_response(200)
             self.send_header("Content-type", "text/event-stream")
             self.end_headers()
+            queue = Queue(0)
+            self.server.dns_queue.subscribe(queue)
 
             while True:
-                item = self.server.dns_queue.get(True)
+                item = queue.get(True)
                 sdata = '{"host" : "%s", "name" : "%s"}' % (item['host'], item['name'])
                 try:
                     self.wfile.write('retry: 1000\ndata: ' + sdata + '\n\n')
                 except:
+                    self.server.dns_queue.unsubscribe(queue)
                     return
 
         else:

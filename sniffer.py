@@ -56,7 +56,7 @@ class Sniffer:
                 d = packet_to_dict(packet[0])
                 if self.filter(d):
                     d['host'] = self.reverse_dns.lookup(d['src'])
-                    self.queue.put(d)
+                    self.queue.submit(d)
 
         t = Thread(target=receive)
         t.daemon = True

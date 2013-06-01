@@ -6,12 +6,17 @@ body{
 	font-family: sans-serif;
 }
 #main{
-	width: 80%;
+	width: 810px;
 	height: 100%;
 	margin: 0 auto;
 }
+#hosts{
+	width: 400px;
+}
+#lines, #ports{
+	width: 200px;
+}
 #hosts, #lines, #ports{
-	width: 33%;
 	float: left;
 	height: 100%;
 }
@@ -20,17 +25,31 @@ body{
 	border-color: black;
 	border-style: solid;
 }
+#hosts div, #ports div{
+	padding: 10px;
+	border-top: 2px solid #eee;
+	border-left: 2px solid #eee;
+	border-bottom: 2px solid #999;
+	border-right: 2px solid #999;
+	background-color: #ddd;
+	overflow: hidden;
+	white-space:nowrap;
+	background-repeat: no-repeat;
+}
 #hosts div{
-	padding: 1em;
+	padding-right: 35px;
 	text-align: right;
-	border: 1px solid;
 	transition: background-color 0.5s;
+	background-image: url('images/computer.png');
+	background-position: 370px;
 }
 #hosts div.hilite{
-	background-color: #ff6;
+	background-color: #fff;
 }
 #ports div{
-	padding: 1em;
+	padding-left: 30px;
 	text-align: left;
-	border: 1px solid;
+	background-image: url('images/port.png');
+	background-repeat: no-repeat;
+	background-position: 10px;
 }
