@@ -1,7 +1,8 @@
 import socket
 from threading import Thread
 from struct import *
-
+import string
+import re
 
 def packet_to_dict(packet):
     #http://www.binarytides.com/python-packet-sniffer-code-linux/
@@ -33,7 +34,15 @@ def packet_to_dict(packet):
 
     d['sport'] =  str(tcph[0])
     d['dport'] =  str(tcph[1])
-    d['count'] = 1
+
+    doff_reserved = tcph[4]
+    tcph_length = doff_reserved >> 4
+    h_size = iph_length + tcph_length * 4
+    data_size = len(packet) - h_size
+    data = packet[h_size:]
+
+    text = filter(lambda x: x in string.printable.replace('"','').replace('  ', ' '), data)
+    d['data'] = re.sub('\s\s+', ' ', text);
 
     return d     
 
@@ -43,7 +52,7 @@ class Sniffer:
         self.reverse_dns = reverse_dns
 
     def filter(self, d):
-        if d.get('src') in ['192.168.1.9', '127.0.0.1']:
+        if d.get('src') in ['127.0.0.1']:
             return None
         return d
 

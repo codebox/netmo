@@ -3,9 +3,19 @@ $(function(){
     var linesObj = $('#lines');
     var svgObj = $('#lines svg');
     var portsObj  = $('#ports');
-    var blockHeight = 42;
+    var blockHeight = 34;
     var svgWidth = svgObj.width();
     var maxHosts = 10;
+
+    var config = {
+        hiliteFade: 1000,
+        lineWidth : '1',
+        lineFadeDelta : 0.1,
+        boxFadeTime : 2000,
+        messageSlideTime: 10,
+        maxMessages: 10,
+        lineColour: '#555'
+    };
 
     function makeNewElement(text, parent){
         var elName  = $('<span></span>');
@@ -24,11 +34,12 @@ $(function(){
             elObj.addClass('hilite');
             setTimeout(function(){
                 elObj.removeClass('hilite');
-            }, 1000);
+            }, config.hiliteFade);
         };
         elObj.getIndex = function(){
             return parent.find('div').index(elObj);
         };
+        elObj.css('z-index', 10)
         return elObj;
     }
 
@@ -38,10 +49,10 @@ $(function(){
         var endY = (portIndex + 0.5) * blockHeight;
 
         path.attr('d', ['m 0,', startY, ' c 50,0 150,', (endY-startY), ' ', svgWidth, ',', (endY - startY)].join(''));
-        path.attr('stroke', 'black');
+        path.attr('stroke', config.lineColour);
         path.attr('fill', 'none');
-        path.attr('stroke-width', '2');
-        var opacity = 1, delta = 0.1;
+        path.attr('stroke-width', config.lineWidth);
+        var opacity = 1, delta = config.lineFadeDelta;
         var interval = setInterval(function(){
             opacity -= delta;
             path.attr('stroke-opacity', opacity);
@@ -82,7 +93,7 @@ $(function(){
                     o.life--;
                     if (o.life <= 0){
                         clearInterval(t);
-                        o.el.fadeOut('1s', function(){
+                        o.el.fadeOut(config.boxFadeTime, function(){
                             o.el.remove();
                         });
                         delete data[address];
@@ -126,10 +137,25 @@ $(function(){
         return obj;
     }());
 
+    var messageCount = 0;
+    function showData(data, port){
+        if (messageCount < config.maxMessages){
+            messageCount++;
+            var div = $('<div></div>');
+            div.addClass('data').addClass('port' + port);
+            div.text(data);
+            div.css('top', Math.floor((Math.random() * 100)) + '%').css('z-index', 5);
+            $('#main').append(div);
+            setTimeout(function(){
+                messageCount--;
+                div.remove();
+            }, config.messageSlideTime * 1000);
+        }
+    }
 
     var dataSource = new EventSource("data");
     dataSource.onmessage = function(e) {
-          var obj = eval('(' + e.data + ')');
+          var obj = JSON.parse(e.data);
           var hostObj = hostsData.getHostObject(obj.host);
           hostObj.ondata();
 
@@ -137,11 +163,14 @@ $(function(){
           portsObj.ondata();
 
           drawLine(hostObj.el.getIndex(), portsObj.el.getIndex());
+          if (obj.data){
+              showData(obj.data, obj.port);
+          }
     };
 
     var dnsSource = new EventSource("dns");
     dnsSource.onmessage = function(e) {
-        var obj = eval('(' + e.data + ')');
+        var obj = JSON.parse(e.data);
         hostsData.getHostObject(obj.host).setName(obj.name);
     };
 

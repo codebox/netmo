@@ -18,7 +18,7 @@ class RequestHandler(BaseHTTPRequestHandler):
 
             while True:
                 item = queue.get(True)
-                sdata = '{"host" : "%s", "port" : "%s"}' % (item['src'], item['dport'])
+                sdata = '{"host" : "%s", "port" : "%s", "data" : "%s"}' % (item['src'], item['dport'], item['data'])
                 try:
                     self.wfile.write('retry: 1000\ndata: ' + sdata + '\n\n')
                 except:
