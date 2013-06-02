@@ -144,7 +144,7 @@ $(function(){
             var div = $('<div></div>');
             div.addClass('data').addClass('port' + port);
             div.text(data);
-            div.css('top', Math.floor((Math.random() * 100)) + '%').css('z-index', 5);
+            div.css('top', Math.floor((Math.random() * 50) + 50) + '%').css('z-index', 7);
             $('#main').append(div);
             setTimeout(function(){
                 messageCount--;

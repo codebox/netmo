@@ -5,15 +5,39 @@ body, html{
 body{
 	font-family: sans-serif;
 }
+body{
+	color: #555;
+
+}
 #main{
 	width: 810px;
 	height: 100%;
 	margin: 0 auto;
 }
-#hosts{
-	width: 400px;
+header{
+	border-bottom: 1px solid #555;
+	padding: 10px;
+	z-index: 10;
 }
-#lines, #ports{
+header h1{
+	padding: 0;
+	margin: 0;
+}
+footer{
+	position: fixed;
+	bottom: 0;
+	border-top: 1px solid #555;
+	background-color: white;
+	text-align: center;
+	padding: 5px;
+	width: 100%;
+	z-index: 10;
+	font-size: 0.8em;
+}
+#hosts, #ports{
+	width: 300px;
+}
+#lines{
 	width: 200px;
 }
 #hosts, #lines, #ports{
@@ -28,7 +52,6 @@ body{
 	overflow: hidden;
 	white-space:nowrap;
 	background-repeat: no-repeat;
-	color: #555;
 	font-size: 12px;
 }
 #hosts div{
@@ -36,7 +59,7 @@ body{
 	text-align: right;
 	transition: color 0.5s;
 	background-image: url('images/computer.png');
-	background-position: 370px;
+	background-position: 270px;
 }
 #hosts div.hilite{
 	color: #55f;
