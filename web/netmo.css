@@ -78,12 +78,25 @@ div.data{
 
 	-webkit-animation-duration: 10s;
 	-webkit-animation-name: slideAcross;
+	-moz-animation-duration: 10s;
+	-moz-animation-name: slideAcross;
 	transition: opacity 10s;
 }
 div.port80{
 	color: #00f;
 }
-@-webkit-keyframes slideAcross {
+@-webkit-keyframes slideAcross{
+  from {
+    left: 100%;
+    opacity: 0.5;
+  }
+ 
+  to {
+    left: -100%;
+    opacity: 0.0;
+  }
+}
+@-moz-keyframes slideAcross{
   from {
     left: 100%;
     opacity: 0.5;
