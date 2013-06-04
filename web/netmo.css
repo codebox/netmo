@@ -4,10 +4,8 @@ body, html{
 }
 body{
 	font-family: sans-serif;
-}
-body{
 	color: #555;
-
+	overflow: hidden;
 }
 #main{
 	width: 810px;
