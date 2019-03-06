@@ -6,7 +6,7 @@ the server, indicating which ports are being used, and displaying readable sampl
 
 <p>
 <br>
-<img class="centered fancyimage" src="http://codebox.org.uk/graphics/netmo.png" alt="NetMo web interface"/>
+<img class="centered fancyimage" src="http://codebox.org.uk/assets/images/netmo.png" alt="NetMo web interface"/>
 <br>
 </p>
 
